@@ -14,7 +14,7 @@ export default function Projects() {
   useEffect(() => {
     (async () => {
       try {
-        const r = await fetch(`${API}/api/projects`);
+        const r = await fetch(`${API}/api/projects`); // ✅ 修正路径
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const json = await r.json();
         setItems(Array.isArray(json) ? json : []);
@@ -38,7 +38,7 @@ export default function Projects() {
         {!loading && !error && (
           <div className="projects-grid">
             {items.map((p) => {
-              const link = p.link || p.url;                // 兼容两种字段
+              const link = p.link || p.url; // 兼容两种字段
               const tech = Array.isArray(p.languages) ? p.languages : [];
               const image = p.screenshot || getDefaultImage(p.title);
 
@@ -62,7 +62,9 @@ export default function Projects() {
                     {tech.length > 0 && (
                       <div className="project-tech">
                         {tech.map((t, i) => (
-                          <span className="tech-tag" key={`${p._id || p.title}-tech-${i}`}>{t}</span>
+                          <span className="tech-tag" key={`${p._id || p.title}-tech-${i}`}>
+                            {t}
+                          </span>
                         ))}
                       </div>
                     )}

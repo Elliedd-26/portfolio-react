@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 
 const API = process.env.REACT_APP_API_URL;
 
-const fmt = (s) => (s && String(s).trim()) || ""; // 简单格式化
-
 export default function Experience() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -12,7 +10,7 @@ export default function Experience() {
   useEffect(() => {
     (async () => {
       try {
-        const r = await fetch(`${API}/api/experiences`);
+        const r = await fetch(`${API}/api/experiences`); // ✅ 修正路径
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         const json = await r.json();
         setItems(Array.isArray(json) ? json : []);
@@ -28,33 +26,21 @@ export default function Experience() {
     <section id="experience" className="experience">
       <div className="container">
         <h2 className="section-title">Experience</h2>
-        <p className="section-subtitle">Where I’ve been building cool stuff</p>
+        <p className="section-subtitle">Where I’ve worked and what I’ve done</p>
 
         {loading && <p>Loading…</p>}
         {error && <p>Oops: {error}</p>}
 
         {!loading && !error && (
-          <div className="timeline">
-            {items.map((e, idx) => {
-              const side = idx % 2 === 0 ? "left" : "right";
-              const start = fmt(e.startDate) || "—";
-              const end = fmt(e.endDate) || "Present";
-
-              return (
-                <div className={`timeline-item ${side}`} key={e._id || e.title}>
-                  <div className="timeline-content">
-                    <h3 className="experience-title">{e.title}</h3>
-                    {e.company && <p className="experience-company">{e.company}</p>}
-                    {(start || end) && (
-                      <p className="experience-date">
-                        {start} — {end}
-                      </p>
-                    )}
-                    {e.description && <p className="experience-description">{e.description}</p>}
-                  </div>
-                </div>
-              );
-            })}
+          <div className="experience-list">
+            {items.map((exp) => (
+              <div className="experience-item" key={exp._id || exp.company}>
+                <h3 className="experience-role">{exp.role}</h3>
+                <p className="experience-company">{exp.company}</p>
+                <p className="experience-dates">{exp.startDate} – {exp.endDate || "Present"}</p>
+                {exp.description && <p className="experience-description">{exp.description}</p>}
+              </div>
+            ))}
           </div>
         )}
       </div>
